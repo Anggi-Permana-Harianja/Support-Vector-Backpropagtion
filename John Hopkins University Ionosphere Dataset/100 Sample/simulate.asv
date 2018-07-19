@@ -1,0 +1,5 @@
+%% simulate function
+%==========================================================================
+function OutputBackprop = simulate(Inputs, Theta1, Theta2)
+Inputs = [ones(size(Inputs, 1), 1) Inputs]; %Inputs(Inputsx35)
+for i = 1:size(Inputs, 1)

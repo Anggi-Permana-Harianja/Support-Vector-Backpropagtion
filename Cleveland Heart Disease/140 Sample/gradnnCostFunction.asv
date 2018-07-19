@@ -1,0 +1,21 @@
+%% gradient cost function
+%==========================================================================
+function Jgrad = gradnnCostFunction(HeartInputs, HeartGroups, Theta1, Theta2, lambda)
+%% inisialisasi Jgrad
+Jgrad = 0;
+
+%% inisialisasi m
+m = length(HeartInputs);
+
+%% target for each class
+yk = zeros(2, size(HeartInputs, 1)); %yk(2x140)
+for i = 1:size(HeartInputs)
+    yk(HeartGroups(i), i) = 1;
+end
+
+%% implement gradient cost function
+HeartInputs = [ones(size(HeartInputs, 1), 1) HeartInputs]; %HeartInputs(140x14)
+for i = 1:size(HeartInputs, 1)
+    a1 = HeartInputs(i,:); %a1(1x14)
+    z2 = Theta1 * a1'; %z2(7x1) Theta1(7x14) a1'(14x1)
+    a2 = sigmoidGradients(z2); %

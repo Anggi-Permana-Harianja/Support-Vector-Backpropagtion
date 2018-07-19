@@ -1,0 +1,61 @@
+%% neural network cost function
+%==========================================================================
+function [J grad ] = nnCostFunction(nn_params, InputLayer, HiddenLayer, OutputLayer, ...
+    Theta1, Theta2, ...
+    IrisInputs, IrisTargets, IrisGroups, lambda)
+%% reshape Theta
+Theta1 = reshape(nn_params(1:20), size(Theta1)); %Theta1(4x5)
+Theta2 = reshape(nn_params(21:end), size(Theta2)); %Theta2(2x5)
+
+%% insialisasi m
+m = length(IrisInputs);
+
+%% inisialisasi cost function
+J = 0;
+
+%% inisialisasi Theta_grad
+Theta1_grad = zeros(size(Theta1)); %Theta1_grad(4x5)
+Theta2_grad = zeros(size(Theta2)); %Theta2_grad(2x5)
+
+%% target for each class
+yk = zeros(OutputLayer, size(IrisInputs, 1)); %yk(2x90)
+for i = 1:size(IrisInputs, 1)
+    yk(IrisTargets(i), i) = 1;
+end
+
+%% feedforward cost function
+IrisInputs = [ones(size(IrisInputs, 1), 1) IrisInputs]; %IrisInputs(90x5)
+for i = 1:size(IrisInputs, 1)
+    a1 = IrisInputs(i,:); %a1(1x5)
+    z2 = Theta1 * a1'; %z2(4x1) Theta1(4x5) a1'(5x1)
+    a2 = sigmoid(z2); %a2(4x1)
+    a2 = [1;a2]; %a2(5x1)
+    z3 = Theta2 * a2; %z3(2x1) Theta2(2x5) a2(5x1)
+    a3 = sigmoid(z3); %a2(2x1)
+    
+    J = J + -yk(:,i)' * log(a3) - (1-yk(:,i)') * log(1-a3);
+end
+J = J/m;
+J = J + (lambda/(2*m)) * sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2));
+
+%% implement backpropagation
+for i = 1:size(IrisInputs, 1)
+    a1 = IrisInputs(i,:); %a1(1x5)
+    z2 = Theta1 * a1'; %z2(4x1) Theta1(4x5) a1'(5x1)
+    a2 = sigmoid(z2); %a2(4x1)
+    a2 = [1;a2]; %a2(5x1)
+    z3 = Theta2 * a2; %z3(2x1) Theta2(2x5) a2(5x1)
+    a3 = sigmoid(z3); %a2(2x1)
+    
+    delta3 = a3 - yk(:,i); %delta3(2x1) a3(2x1) yk(2x1)
+    delta2 = (Theta2' * delta3) .* [1;sigmoidGradients(z2)]; %delta2(5x1) Theta2'(5x2) delta3(2x1) [1;sigmoidGradients(z2)](5x1)
+    delta2 = delta2(2:end); %delta2(4x1)
+    
+    Theta1_grad = Theta1_grad + delta2 * a1; %Theta1_grad(4x5) delta2(4x1) a1(1x5)
+    Theta2_grad = Theta2_grad + delta3 * a2'; %Theta2_grad(2x5) delta3(2x1) a2'(1x5)
+end
+Theta1_grad = (1/m) * Theta1_grad + lambda * Theta1 .* [zeros(size(Theta1, 1), 1) Theta1(:,2:end)]; %Theta1_grad(4x5)
+Theta2_grad = (1/m) * Theta2_grad + lambda * Theta2 .* [zeros(size(Theta2, 1), 1) Theta2(:,2:end)]; %Theta2_grad(2x5)
+grad = [Theta1_grad(:);Theta2_grad(:)]; %grad(90x1)
+
+end

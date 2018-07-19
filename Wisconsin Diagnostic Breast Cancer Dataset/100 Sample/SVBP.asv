@@ -1,0 +1,5 @@
+%% SUPPORT VECTOR BACKPROPAGATION segment
+%==========================================================================
+function Classified = SVBP(newSample, BreastGroups, Backpropadata, Theta1, Theta2)
+%% inisialisasi Backpropagation output
+Backprop

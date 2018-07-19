@@ -1,0 +1,5 @@
+%% SUPPORT VECTOR MACHINE segment
+%==========================================================================
+function Classified = SVBP(newSample, IrisGroups, Backpropdata, Theta1, Theta2)
+%% insialisasi backpropagation output
+IrisOutput = zeros(size(newSample, 1), 2); %IrisOutput(newSample)
